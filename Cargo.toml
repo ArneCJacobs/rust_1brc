@@ -9,3 +9,6 @@ criterion = "0.5.1"
 [[bench]]
 name = "all"
 harness = false
+
+[dependencies]
+diffy = "0.3.0"

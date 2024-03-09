@@ -7,6 +7,8 @@ struct Measurement {
     count: i64,
     sum: i32,
 }
+// used https://sdremthix.medium.com/branchless-programming-why-your-cpu-will-thank-you-5f405d97b0c8
+// as a reference
 
 #[inline]
 pub fn one_brc(file: &str) -> String {
@@ -17,28 +19,33 @@ pub fn one_brc(file: &str) -> String {
         let line = line.unwrap();
         let (station, value_str) = line.split_once(';').unwrap();
 
-        // parse value
+        // branclessly parse value 
         let mut index: usize = 0;
         let str_slice = value_str.as_bytes();
-        let mut negative = false;
 
-        if str_slice[index] == b'-' {
-            negative = true;
-            index += 1;
-        } 
+        let negative = str_slice[index] == b'-';
+        index += negative as usize;
+
         let mut value: i32 = (str_slice[index] - b'0') as i32;
         index += 1;
-        if str_slice[index] != b'.' {
-          value = value * 10 + (str_slice[index] - b'0') as i32;
-          index += 2;
-        } else {
-            index += 1;
-        }
+
+        // if str_slice[index] != b'.' {
+        //   value = value * 10 + (str_slice[index] - b'0') as i32;
+        // }
+        let is_dot_mask = (str_slice[index] == b'.') as i32 - 1;
+        value += is_dot_mask & (9 * value + (str_slice[index].wrapping_sub(b'0') as i32));
+
+        let is_not_dot_mask = is_dot_mask as usize;
+        index += (2 & is_not_dot_mask) | (1 & !is_not_dot_mask);
 
         value = value * 10 + (str_slice[index] - b'0') as i32;
-        if negative {
-          value = -value; 
-        }
+
+        // if negative {
+        //   value = -value; 
+        // }
+        let mask = negative as i32 - 1;
+        value = (value & mask) | (-value & !mask);
+
 
         // update measurement
         measurements

@@ -42,7 +42,7 @@ pub fn one_brc(file: &str) -> String {
         .iter()
         .map(|(station, measurement)| {
             format!(
-                "{}={}/{}/{}",
+                "{}={}/{}/{}\n",
                 station,
                 measurement.min,
                 measurement.sum / measurement.count as f32,
