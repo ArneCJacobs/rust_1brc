@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::io::BufRead;
 
+#[derive(Debug)]
 struct Measurement {
     min: i32,
     max: i32,
@@ -55,7 +56,7 @@ pub fn one_brc(file: &str) -> String {
                 min: value,
                 max: value,
                 count: 1,
-                sum: 0,
+                sum: value,
             });
     }
 
@@ -67,10 +68,29 @@ pub fn one_brc(file: &str) -> String {
             format!(
                 "{}={:.1}/{:.1}/{:.1}\n",
                 station,
-                (measurement.min as f32 / 10.0),
-                (measurement.sum as f32 / 10.0) / measurement.count as f32,
-                (measurement.max as f32 / 10.0),
+                (measurement.min as f64 / 10.0),
+                round((measurement.sum as f64 / 10.0) / measurement.count as f64),
+                (measurement.max as f64 / 10.0),
             )
         })
         .fold(String::new(), |acc, x| acc + &x);
+}
+
+#[inline]
+fn round(value: f64) -> f64 {
+    (value * 10.0).round() / 10.0
+}
+
+
+#[cfg(test)]
+mod tests {
+    use std::fs::read_to_string;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn test_one_brc() {
+        let actual = super::one_brc("/Users/steam/git/1brc/measurements_10_000.txt");
+        let expected = read_to_string("./data/sol_10_000.txt").expect("Could not read file");
+        assert_eq!(actual, expected);
+    }
 }

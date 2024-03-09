@@ -5,6 +5,7 @@ edition = "2021"
 
 [dev-dependencies]
 criterion = "0.5.1"
+pretty_assertions = "1.4.0"
 
 [[bench]]
 name = "all"

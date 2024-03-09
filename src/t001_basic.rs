@@ -56,3 +56,15 @@ pub fn one_brc(file: &str) -> String {
 fn round(value: f64) -> f64 {
     (value * 10.0).round() / 10.0
 }
+
+#[cfg(test)]
+mod tests {
+    use std::fs::read_to_string;
+
+    #[test]
+    fn test_one_brc() {
+        let actual = super::one_brc("/Users/steam/git/1brc/measurements_10_000.txt");
+        let expected = read_to_string("./data/sol_10_000.txt").expect("Could not read file");
+        assert_eq!(actual, expected);
+    }
+}
