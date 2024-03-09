@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::io::BufRead;
 
+#[derive(Debug)]
 struct Measurement {
-    min: f32,
-    max: f32,
+    min: f64,
+    max: f64,
     count: i64,
-    sum: f32,
+    sum: f64,
 }
 
 #[inline]
@@ -16,7 +17,7 @@ pub fn one_brc(file: &str) -> String {
     for line in reader.lines() {
         let line = line.unwrap();
         let (station, value) = line.split_once(';').unwrap();
-        let value: f32 = value.parse().unwrap();
+        let value: f64 = value.parse().unwrap();
 
         measurements
             .entry(station.to_string())
@@ -32,7 +33,7 @@ pub fn one_brc(file: &str) -> String {
                 min: value,
                 max: value,
                 count: 1,
-                sum: 0.0,
+                sum: value,
             });
     }
 
@@ -42,12 +43,16 @@ pub fn one_brc(file: &str) -> String {
         .iter()
         .map(|(station, measurement)| {
             format!(
-                "{}={}/{}/{}\n",
+                "{}={:.1}/{:.1}/{:.1}\n",
                 station,
                 measurement.min,
-                measurement.sum / measurement.count as f32,
+                round(round(measurement.sum) / measurement.count as f64),
                 measurement.max
             )
         })
-        .fold(String::new(), |acc, x| acc + ", " + &x);
+        .fold(String::new(), |acc, x| acc +  &x);
+}
+
+fn round(value: f64) -> f64 {
+    (value * 10.0).round() / 10.0
 }

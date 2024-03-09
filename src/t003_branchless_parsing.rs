@@ -79,5 +79,5 @@ pub fn one_brc(file: &str) -> String {
                 (measurement.max as f32 / 10.0),
             )
         })
-        .fold(String::new(), |acc, x| acc + ", " + &x);
+        .fold(String::new(), |acc, x| acc + &x);
 }

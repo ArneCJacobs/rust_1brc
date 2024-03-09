@@ -65,12 +65,12 @@ pub fn one_brc(file: &str) -> String {
         .iter()
         .map(|(station, measurement)| {
             format!(
-                "{}={}/{}/{}\n",
+                "{}={:.1}/{:.1}/{:.1}\n",
                 station,
                 (measurement.min as f32 / 10.0),
                 (measurement.sum as f32 / 10.0) / measurement.count as f32,
                 (measurement.max as f32 / 10.0),
             )
         })
-        .fold(String::new(), |acc, x| acc + ", " + &x);
+        .fold(String::new(), |acc, x| acc + &x);
 }
