@@ -9,7 +9,7 @@ struct Measurement {
 }
 
 #[inline]
-pub fn one_brc(file: &str) {
+pub fn one_brc(file: &str) -> String {
     let mut measurements: HashMap<String, Measurement> = HashMap::new();
     let file = std::fs::File::open(file).unwrap();
     let reader = std::io::BufReader::new(file);
@@ -38,25 +38,16 @@ pub fn one_brc(file: &str) {
 
     let mut measurements_list: Vec<_> = measurements.iter().collect();
     measurements_list.sort_unstable_by_key(|(station, _)| *station);
-    print!("{{");
-    let mut iterator = measurements_list.iter();
-    let (station, measurement) = iterator.next().unwrap();
-    print!(
-        "{}={}/{}/{}",
-        station,
-        measurement.min,
-        measurement.sum / measurement.count as f32,
-        measurement.max
-    );
-
-    for (station, measurement) in iterator {
-        print!(
-            ", {}={}/{}/{}",
-            station,
-            measurement.min,
-            measurement.sum / measurement.count as f32,
-            measurement.max
-        );
-    }
-    println!("}}");
+    return measurements_list
+        .iter()
+        .map(|(station, measurement)| {
+            format!(
+                "{}={}/{}/{}",
+                station,
+                measurement.min,
+                measurement.sum / measurement.count as f32,
+                measurement.max
+            )
+        })
+        .fold(String::new(), |acc, x| acc + ", " + &x);
 }

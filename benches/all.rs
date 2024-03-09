@@ -10,6 +10,8 @@ fn bench_1brcs(c: &mut Criterion) {
     let mut group = c.benchmark_group("1brcs");
     group.bench_function("001_basic", |b| b.iter(|| t001_basic::one_brc(black_box(FILE_LOCATION))));
     group.bench_function("002_basic", |b| b.iter(|| t002_fixed_point::one_brc(black_box(FILE_LOCATION))));
+
+    group.finish();
 }
 
 criterion_group!(benches, bench_1brcs);
