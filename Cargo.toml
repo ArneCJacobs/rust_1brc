@@ -7,9 +7,13 @@ edition = "2021"
 criterion = "0.5.1"
 pretty_assertions = "1.4.0"
 
+[profile.bench]
+opt-level = 3
+
 [[bench]]
 name = "all"
 harness = false
 
 [dependencies]
 diffy = "0.3.0"
+memmap2 = "0.9.4"

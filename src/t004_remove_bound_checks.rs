@@ -22,6 +22,10 @@ pub fn one_brc(file: &str) -> String {
         // branclessly parse value 
         let mut index: usize = 0;
         let str_slice = value_str.as_bytes();
+        let mut str_slice_buf: [u8; 5] = [0; 5]; // casting to an array to remove bound checks
+        str_slice_buf[..str_slice.len()].copy_from_slice(str_slice);
+        let str_slice = &str_slice_buf;
+
 
         let negative = str_slice[index] == b'-';
         index += negative as usize;

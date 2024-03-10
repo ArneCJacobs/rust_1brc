@@ -20,30 +20,35 @@ pub fn one_brc(file: &str) -> String {
         let (station, value_str) = line.split_once(';').unwrap();
 
         // branclessly parse value 
-        let mut index: usize = 0;
-        let str_slice = value_str.as_bytes();
+        
+        let mut value: i32;
+        unsafe {
+            let mut index: usize = 0;
+            let str_slice = value_str.as_bytes();
 
-        let negative = str_slice[index] == b'-';
-        index += negative as usize;
+            let negative = *str_slice.get_unchecked(index) == b'-';
+            index = index.wrapping_add(negative as usize);
 
-        let mut value: i32 = (str_slice[index] - b'0') as i32;
-        index += 1;
+            value = (*str_slice.get_unchecked(index) - b'0') as i32;
+            index += 1;
 
-        // if str_slice[index] != b'.' {
-        //   value = value * 10 + (str_slice[index] - b'0') as i32;
-        // }
-        let is_dot = (str_slice[index] == b'.') as i32;
-        value += (is_dot - 1) & (9 * value + (str_slice[index].wrapping_sub(b'0') as i32));
+            // if str_slice[index] != b'.' {
+            //   value = value * 10 + (str_slice[index] - b'0') as i32;
+            // }
+            let is_dot = (*str_slice.get_unchecked(index) == b'.') as i32;
+            value += (is_dot - 1) & (9 * value + ((*str_slice.get_unchecked(index)).wrapping_sub(b'0') as i32));
 
-        index += 2 - is_dot as usize;
+            index += 2 - is_dot as usize;
 
-        value = value * 10 + (str_slice[index] - b'0') as i32;
+            value = value * 10 + (*str_slice.get_unchecked(index) - b'0') as i32;
 
-        // if negative {
-        //   value = -value; 
-        // }
-        let mask = negative as i32 - 1;
-        value = (value & mask) | (-value & !mask);
+            // if negative {
+            //   value = -value; 
+            // }
+            let mask = negative as i32 - 1;
+            value = (value & mask) | (-value & !mask);
+        }
+
 
 
         // update measurement
