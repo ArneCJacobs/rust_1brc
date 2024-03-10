@@ -16,6 +16,7 @@ pub fn one_brc(file: &str) -> String {
     let file = std::fs::File::open(file).unwrap();
     let mmap = unsafe { Mmap::map(&file).expect("Whoopsy doodles") };
     let mut mmap_index = 0;
+    let mmap_len = mmap.len();
 
     while mmap_index < mmap.len() {
         let name_start_index = mmap_index;
@@ -30,29 +31,15 @@ pub fn one_brc(file: &str) -> String {
         while mmap[mmap_index] != b'\n' {
             mmap_index += 1;
         }
-        let value_str = std::str::from_utf8(&mmap[value_start_index..mmap_index]).unwrap();
-
-        let mut index: usize = 0;
-        let str_slice = value_str.as_bytes();
-        let mut negative = false;
-
-        if str_slice[index] == b'-' {
-            negative = true;
-            index += 1;
-        }
-        let mut value: i32 = (str_slice[index] - b'0') as i32;
-        index += 1;
-        if str_slice[index] != b'.' {
-            value = value * 10 + (str_slice[index] - b'0') as i32;
-            index += 2;
+        let value = if value_start_index + 8 < mmap_len {
+            let value_array: &[u8; 8] = mmap[value_start_index..value_start_index+8].try_into().unwrap();
+            let value_i64 = i64::from_le_bytes(*value_array);
+            parse_data_point(value_i64) as i32
         } else {
-            index += 1;
-        }
+            let value_str = std::str::from_utf8(&mmap[value_start_index..mmap_index]).unwrap();
+            (value_str.parse::<f64>().unwrap() * 10.0) as i32
+        };
 
-        value = value * 10 + (str_slice[index] - b'0') as i32;
-        if negative {
-            value = -value;
-        }
 
         measurements
             .entry(station)
@@ -87,6 +74,35 @@ pub fn one_brc(file: &str) -> String {
             )
         })
         .fold(String::new(), |acc, x| acc + &x);
+}
+
+const DOT_DETECTOR: i64 = 0x10101000;
+const ASCII_TO_DIGIT_MASK: i64 = 0x0F000F0F00;
+const MAGIC_MULTIPLIER: i64 = 100 * 0x1000000 + 10 * 0x10000 + 1;
+
+// adapted from :
+// https://questdb.io/blog/1brc-merykittys-magic-swar/
+// https://github.com/gunnarmorling/1brc/blob/dfec2cdbe6a0334cff054f333ec4b4d9e4d775cf/src/main/java/dev/morling/onebrc/CalculateAverage_merykitty.java#L165-L195
+#[inline]
+fn parse_data_point(data: i64) -> i64 {
+    let negated_input = !data;
+    let broadcast_sign = (negated_input << 59) >> 63;
+    //     long maskToRemoveSign = ~(broadcastSign & 0xFF);
+    let mask_to_remove_sign = !(broadcast_sign & 0xFF);
+    //     long withSignRemoved = inputData & maskToRemoveSign;
+    let with_sign_removed = data & mask_to_remove_sign;
+    //     int dotPos = Long.numberOfTrailingZeros(negatedInput & DOT_DETECTOR);
+    let dot_pos = (negated_input & DOT_DETECTOR).trailing_zeros();
+    //     long alignedToTemplate = withSignRemoved << (28 - dotPos);
+    let aligned_to_template = with_sign_removed << (28 - dot_pos);
+    //     long digits = alignedToTemplate & ASCII_TO_DIGIT_MASK;
+    let digits = aligned_to_template & ASCII_TO_DIGIT_MASK;
+    //     long absValue = ((digits * MAGIC_MULTIPLIER) >>> 32) & 0x3FF;
+    let abs_value = ((digits.wrapping_mul(MAGIC_MULTIPLIER)) as u64 >> 32) as i64 & 0x3FF;
+    //     long temperature = (absValue ^ broadcastSign) - broadcastSign;
+    (abs_value ^ broadcast_sign) - broadcast_sign
+    //     long nextLineStart = (dotPos >>> 3) + 3;
+    //     return (int) temperature;
 }
 
 fn round(value: f64) -> f64 {
