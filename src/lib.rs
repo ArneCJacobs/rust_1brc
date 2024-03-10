@@ -6,3 +6,5 @@ pub mod t005_remove_bound_check_unsafe;
 pub mod t006_memmap;
 pub mod t007_memmap_fixed_point;
 pub mod t008_bittwiddeling_parsing_extreme;
+pub mod t009_btree;
+pub mod t010_radix_trie;

@@ -1,8 +1,8 @@
 use criterion::{criterion_group, criterion_main, Criterion, black_box};
 extern crate rust_1_brc;
 
-// const FILE_LOCATION: &str = "/Users/steam/git/1brc/measurements.txt";
-const FILE_LOCATION: &str = "/Users/steam/git/1brc/measurements_10_000.txt";
+// const FILE_LOCATION: &str = "../1brc/measurements.txt";
+const FILE_LOCATION: &str = "../1brc/measurements_10_000.txt";
 
 use rust_1_brc::t001_basic;
 use rust_1_brc::t002_fixed_point;
@@ -12,6 +12,8 @@ use rust_1_brc::t005_remove_bound_check_unsafe;
 use rust_1_brc::t006_memmap;
 use rust_1_brc::t007_memmap_fixed_point;
 use rust_1_brc::t008_bittwiddeling_parsing_extreme;
+use rust_1_brc::t009_btree;
+use rust_1_brc::t010_radix_trie;
 fn bench_1brcs(c: &mut Criterion) {
     let mut group = c.benchmark_group("1brcs");
     group.bench_function("001_basic", |b| b.iter(|| t001_basic::one_brc(black_box(FILE_LOCATION))));
@@ -22,6 +24,8 @@ fn bench_1brcs(c: &mut Criterion) {
     group.bench_function("006_memmap", |b| b.iter(|| t006_memmap::one_brc(black_box(FILE_LOCATION))));
     group.bench_function("007_memmap_fixed_point", |b| b.iter(|| t007_memmap_fixed_point::one_brc(black_box(FILE_LOCATION))));
     group.bench_function("008_bittwiddeling_parsing_extreme", |b| b.iter(|| t008_bittwiddeling_parsing_extreme::one_brc(black_box(FILE_LOCATION))));
+    group.bench_function("009_btree", |b| b.iter(|| t009_btree::one_brc(black_box(FILE_LOCATION))));
+    group.bench_function("010_radix_trie", |b| b.iter(|| t010_radix_trie::one_brc(black_box(FILE_LOCATION))));
 
     group.finish();
 }

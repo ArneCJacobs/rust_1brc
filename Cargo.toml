@@ -17,3 +17,4 @@ harness = false
 [dependencies]
 diffy = "0.3.0"
 memmap2 = "0.9.4"
+radix_trie = "0.2.1"
