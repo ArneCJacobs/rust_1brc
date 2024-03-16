@@ -9,6 +9,10 @@ pretty_assertions = "1.4.0"
 
 [profile.bench]
 opt-level = 3
+codegen-units = 1
+lto = "fat"
+strip = "symbols"
+panic = "abort"
 
 [[bench]]
 name = "all"
@@ -18,3 +22,5 @@ harness = false
 diffy = "0.3.0"
 memmap2 = "0.9.4"
 radix_trie = "0.2.1"
+twox-hash = "1.6.3"
+xxhash-rust = {version = "0.8.10", features = ["xxh3"]}

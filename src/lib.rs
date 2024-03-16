@@ -8,3 +8,6 @@ pub mod t007_memmap_fixed_point;
 pub mod t008_bittwiddeling_parsing_extreme;
 pub mod t009_btree;
 pub mod t010_radix_trie;
+pub mod t011_fxhash;
+pub mod t012_xxhash1;
+pub mod t013_xxhash2;

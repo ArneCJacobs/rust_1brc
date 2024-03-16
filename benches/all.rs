@@ -14,6 +14,9 @@ use rust_1_brc::t007_memmap_fixed_point;
 use rust_1_brc::t008_bittwiddeling_parsing_extreme;
 use rust_1_brc::t009_btree;
 use rust_1_brc::t010_radix_trie;
+use rust_1_brc::t011_fxhash;
+use rust_1_brc::t012_xxhash1;
+use rust_1_brc::t013_xxhash2;
 fn bench_1brcs(c: &mut Criterion) {
     let mut group = c.benchmark_group("1brcs");
     group.bench_function("001_basic", |b| b.iter(|| t001_basic::one_brc(black_box(FILE_LOCATION))));
@@ -26,6 +29,9 @@ fn bench_1brcs(c: &mut Criterion) {
     group.bench_function("008_bittwiddeling_parsing_extreme", |b| b.iter(|| t008_bittwiddeling_parsing_extreme::one_brc(black_box(FILE_LOCATION))));
     group.bench_function("009_btree", |b| b.iter(|| t009_btree::one_brc(black_box(FILE_LOCATION))));
     group.bench_function("010_radix_trie", |b| b.iter(|| t010_radix_trie::one_brc(black_box(FILE_LOCATION))));
+    group.bench_function("011_fxhash", |b| b.iter(|| t011_fxhash::one_brc(black_box(FILE_LOCATION))));
+    group.bench_function("012_xxhash1", |b| b.iter(|| t012_xxhash1::one_brc(black_box(FILE_LOCATION))));
+    group.bench_function("013_xxhash2", |b| b.iter(|| t013_xxhash2::one_brc(black_box(FILE_LOCATION))));
 
     group.finish();
 }
