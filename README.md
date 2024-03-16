@@ -15,7 +15,7 @@ The syntax for the code block below is
 with v1 the verion that was copied and modified, becoming v2 
 ```mermaid
 flowchart LR
-    --> t001
+    start --> t001
     t001 --> t002
     t002 --> t003
     t003 --> t004
