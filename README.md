@@ -13,18 +13,19 @@ some_dir/
 The syntax for the code block below is
 `v1 --> v2`
 with v1 the verion that was copied and modified, becoming v2 
-```
---> t001
-t001 --> t002
-t002 --> t003
-t003 --> t004
-t004 --> t005
-t001 --> t006
-t006 --> t007
-t007 --> t008
-t008 --> t009
-t008 --> t010
-t008 --> t011
-t008 --> t012
-t008 --> t013
+```mermaid
+flowchart LR
+    --> t001
+    t001 --> t002
+    t002 --> t003
+    t003 --> t004
+    t004 --> t005
+    t001 --> t006
+    t006 --> t007
+    t007 --> t008
+    t008 --> t009
+    t008 --> t010
+    t008 --> t011
+    t008 --> t012
+    t008 --> t013
 ```
